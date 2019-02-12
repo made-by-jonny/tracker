@@ -23,21 +23,20 @@ const instructions = Platform.select({
 export default class App extends Component {
   constructor(){
     super()
-      this.state = {items: []};
+      this.state = {items: [], inCircle: 'no'};
   }
 
   componentDidMount() {
-    const active = false
       navigator.geolocation.watchPosition((e) => {
         const data = geolib.isPointInCircle(
-          {latitude: 54.971938, longitude: -1.623452},
-          {latitude: 54.978252,longitude: -1.617780},
-          5000
+          {latitude: e.coords.latitude, longitude: e.coords.longitude},
+          {latitude: 54.971752,longitude: -1.623445},
+          1000
         )
-        if(data === true && active === true) {
-          console.log('heya')
+        if(data === true) {
+          this.setState({inCircle: 'yes'})
         }else {
-          console.log('bye')
+          this.setState({inCircle: 'no'})
         }
       })
   }
@@ -45,6 +44,7 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
+          <Text style={styles.text}>Am I at work: {this.state.inCircle}</Text>
           <MapView
           style={styles.map}
           annotations={this.state.items}
@@ -74,6 +74,7 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
+    zIndex: -1
   },
   container: {
     flex: 1,
@@ -81,6 +82,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
+  text: {
+    position: 'absolute',
+    top: 50,
+    left: 10,
+    backgroundColor: '#fff',
+    zIndex: 10
+  },  
   welcome: {
     fontSize: 20,
     textAlign: 'center',
@@ -92,3 +100,13 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
+
+
+{/* <key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict> */}
